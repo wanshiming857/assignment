@@ -1,0 +1,359 @@
+#Function to check if a string contains numbers
+def contains_numbers(input_string):
+    # Return True if any character in the string is a digit, otherwise False
+    return any(char.isdigit() for char in input_string)
+
+# Function to validate the name and department (no numbers allowed)
+def validate_name_and_department(input_string, field_name):
+    # Check if the string contains numbers
+    if contains_numbers(input_string):
+        print('Error:', field_name , 'cannot contain numbers. Please enter a valid',field_name)
+        return False
+    return True
+# Function to add a new course to the 'courses.txt' file:
+def add_new_course():
+    while True:
+        course_code = input('Enter course code: ').strip()
+        if not course_code:
+            print('Course code cannot be empty, try again.')
+            continue
+        # Check if the course code already exists
+        try:
+            with open('../../Desktop/courses.txt', 'r') as file:
+                courses = file.readlines()
+            if any(course.startswith(course_code + ',') for course in courses):
+                print('Error: Course code already exists, please enter a different course code.')
+                continue
+        except FileNotFoundError:
+            # If the file does not exist, proceed (no duplicate course codes can exist yet)
+            pass
+        break  # Exit the loop once a unique course code is provided
+    course_name=input('enter course name: ').strip()
+    while not course_name:
+        print('course name cannot be empty,try again.')
+        course_name=input('enter course name: ')
+    # Validate course name (no numbers allowed)
+    while not validate_name_and_department(course_name, "course name"):
+        course_name = input('Enter course name: ').strip()
+
+    course_credits=input('enter course credits: ').strip()
+    while not course_credits.isdigit() or not (1<= int(course_credits)<= 7):
+        print('invalid course credits , try again')
+        course_credits=input('enter course credits: ').strip()
+
+    # Format course details for storage:
+    course_details=course_code+','+course_name+','+course_credits+'\n'
+
+    # Append course details for storage:
+    with open('../../Desktop/courses.txt', 'a') as file:
+        file.write(course_details)
+    print('new course add successfully.')
+
+# Function to validate student ID
+def validate_student_id(student_id):
+    student_id = student_id.upper()
+    # validates the student ID ensure it starts with two capital letters and is followed by six numbers:
+    if len(student_id) ==8 and student_id[:2].isalpha() and student_id[:2].isupper() and student_id[2:].isdigit():
+        return True
+    else:
+        return False
+
+# Function to add a new student to the 'students.txt' file:
+def add_student():
+    while True:
+        student_id=input('Enter student ID : ').strip().upper()
+        if not student_id:
+            print('student ID cannot be empty.try again.')
+            continue
+        # validate the student ID format
+        if not validate_student_id(student_id):
+            print("Invalid student ID format.please ensure the ID starts with two letters followed by six numbers (e.g:AB123456).")
+            continue # Reclaim for student ID if invalid
+        try:
+           # check if student ID already exists in the file
+           with open('../../Desktop/students.txt', 'r') as file: # open the file in read mode
+               students = file.readlines() # Read all lines
+           if any(student.split(',')[0].strip().upper() == student_id for student in students):
+               print("Error: Student ID already exists. Please enter a different ID.")
+               continue
+        except FileNotFoundError:
+            pass
+
+        break # Exit the loop once a valid and unique ID is provided
+
+    student_name=input('Enter student name: ')
+    while not student_name:
+        print('student name cannot be empty,try again')
+        student_name=input('Enter student name: ')
+    # Validate name (no numbers allowed)
+    while not validate_name_and_department(student_name,'student name'):
+        student_name = input('enter student name: ')
+    department=input('Enter department: ')
+    while not department:
+        print('department cannot be empty.try again.')
+        department=input('Enter department: ')
+    while not validate_name_and_department(department,'department'):
+        department = input('Enter department: ').strip()
+
+
+    # Format student details for storage:
+    student_details=student_id+','+student_name+','+department+'\n'
+
+    # Append student details to file:
+    with open('../../Desktop/students.txt', 'a') as file:
+        file.write(student_details)
+    print('student added successfully.')
+
+# Function to remove a student from 'students.txt':
+def remove_student():
+    student_id=input('Enter the ID of the student to remove: ')
+    try:
+       # Read all students from file:
+       with open('../../Desktop/students.txt', 'r') as file:
+           students=file.readlines()
+
+       removed=False # Flag to track if the student was removed:
+
+       # write back all students except the one to be removed:
+       with open('../../Desktop/students.txt', 'w') as file:
+           for student in students:
+               if not student.startswith(student_id+','):
+                   file.write(student)
+               else:
+                   removed=True
+
+       if removed:
+           print('student removed successfully.')
+       else:
+           print('student ID not found.')
+    except FileNotFoundError:
+        print("error: 'students.txt' file not found.no records to remove")
+
+# Function to manage students (add or remove):
+def manage_students():
+    print('1. Add student')
+    print('2. Remove student')
+    choice = input('Enter your choice: ')
+
+    if choice == '1':
+        add_student()
+    elif choice == '2':
+        remove_student()
+    else:
+        print('Invalid option.')
+
+# Function to validate lecturer ID
+def validate_lecturer_id(lecturer_id):
+    lecturer_id = lecturer_id.upper()
+    # validate the lecturer ID ensure it starts with two capital letters and is followed by six numbers:
+    if len(lecturer_id) == 8 and lecturer_id[:2].isalpha() and lecturer_id[:2].isupper() and lecturer_id[2:].isdigit():
+        return True
+    else:
+        return False
+
+# Function to add a new lecturer to 'lecturers.txt':
+def add_lecturer():
+    while True:
+        lecturer_id=input('Enter lecturer ID: ').strip().upper()
+        if not lecturer_id:
+            print('lecturer ID cannot be empty.try again.')
+            continue
+        # validate the lecturer ID formate:
+        if not validate_lecturer_id(lecturer_id):
+            print('Invalid lecturer ID format. please ensure the ID starts with two capital letters followed by six numbers (e.g: AB123456).')
+            continue # Reclaim for lecturer ID if invalid
+        try:
+           # Check if lecturer ID already exists in the file
+           with open("../../Desktop/lecturers.txt", 'r') as file :
+               lecturers= file.readlines()
+           if any(lecturer.split(',')[0].strip().upper() == lecturer_id for lecturer in lecturers):
+               print("Error: Lecturer ID already exists. Please enter a different ID.")
+               continue
+        except FileNotFoundError:
+            pass
+        break # Exit the loop once a valid and unique ID is provided
+
+    lecturer_name=input('Enter lecturer name: ')
+    while not lecturer_name:
+        print('lecturer name cannot be empty, try again.')
+        lecturer_name=input('Enter lecturer name: ')
+    # Validate lecturer name (no numbers allowed)
+    while not validate_name_and_department(lecturer_name, "lecturer name"):
+        lecturer_name = input('Enter lecturer name: ')
+
+    department=input('enter department: ')
+    while not department:
+        print('department cannot be empty,try again.')
+        department=input('enter department: ')
+    #Validate department(no numbers allowed)
+    while not validate_name_and_department(department, "department"):
+        department = input('Enter department: ')
+
+    # Format lecturer details for storage:
+    lecturer_details=lecturer_id+','+lecturer_name+','+department+'\n'
+
+    # Append lecturer details to file:
+    with open('../../Desktop/lecturers.txt', 'a') as file :
+       file.write(lecturer_details)
+    print('new lecturer added successfully.')
+
+# Function to remove a lecturer from 'lecturers.txt':
+def remove_lecturer():
+    lecturer_id=input('Enter lecturer ID to remove: ')
+
+    # Read all lecturers from file
+    with open('../../Desktop/lecturers.txt', 'r') as file :
+       lecturers=file.readlines()
+
+    removed=False # Flag to track if the lecturer was removed
+
+    # write back all lecturers except the one to be removed
+    with open('../../Desktop/lecturers.txt', 'w') as file:
+       for lecturer in lecturers:
+         if not lecturer.startswith(lecturer_id+','):
+           file.write(lecturer)
+         else:
+            removed=True
+    if removed:
+        print('lecturer removed successfully.')
+    else:
+        print('lecturer ID not found.')
+
+# Function to update lecturer information in 'lecturers.txt'
+def update_lecturer():
+    lecturer_id=input('Enter lecturer ID to update: ')
+
+    # Read all lecturers from file:
+    with open('../../Desktop/lecturers.txt', 'r') as file:
+       lecturers=file.readlines()
+
+    update=False # Flag to track if the lecturer was updated
+
+    # Update lecturer details if found
+    with open('../../Desktop/lecturers.txt', 'w') as file:
+       for lecturer in lecturers:
+          if lecturer.startswith(lecturer_id+','):
+            name=input('Enter new lecturer name: ')
+            department=input('Enter new department: ')
+            updated_lecturer=lecturer_id+','+name+','+department+'\n'
+            file.write(updated_lecturer)
+            update=True
+          else:
+            file.write(lecturer)
+
+    if update:
+        print('lecturer updated successfully.')
+    else:
+        print('lecturer ID not found.')
+
+# Function to manage lecturers: add , remove , or update
+def manage_lecturers():
+    print('1. Add lecturer')
+    print('2. Remove lecturer')
+    print('3. Update lecturer')
+    choice=input('Enter your choice: ')
+
+    # call the appropriate function based on user input
+    if choice == '1':
+        add_lecturer()
+    elif choice == '2':
+        remove_lecturer()
+    elif choice =='3':
+        update_lecturer()
+    else:
+        print('Invalid option.') # Handle invalid input
+
+# Function to count lines in a file
+def count_lines_in_file(filename):
+    line_count = 0  # Initialize line counter
+    try:
+        with open(filename, "r") as file:# Open the file in read mode
+            for _ in file:
+                line_count += 1 # Increment line count for each line
+    except FileNotFoundError:
+        print('error:',filename,'not found.')
+    return line_count
+# Function to generate reports on total students, courses, and lecturers
+def generate_reports():
+    student_count = count_lines_in_file("../../Desktop/students.txt") # count lines in students file
+    course_count = count_lines_in_file("../../Desktop/courses.txt") # count lines in courses file
+    lecturer_count = count_lines_in_file("../../Desktop/lecturers.txt") # count lines in lecturers file
+
+    # print summary report
+    print("Total Students:",student_count)
+    print("Total Active Courses:", course_count)
+    print("Total Faculty:",lecturer_count)
+# Function to view all stored data from students, courses, and lecturers
+def view_all_data():
+    # Function to read file data, or return an empty list if the file is not found
+    def read_file(filename):
+        try:
+            with open(filename, "r") as file:
+                return [line.strip() for line in file if line.strip()]
+        except FileNotFoundError:
+            return []
+
+    # Read data from files
+    students = read_file("../../Desktop/students.txt")
+    courses = read_file("../../Desktop/courses.txt")
+    lecturers = read_file("../../Desktop/lecturers.txt")
+
+    # Determine the maximum number of rows
+    max_rows = max(len(students), len(courses), len(lecturers))
+
+    # Fill shorter lists with empty strings
+    students += [""] * (max_rows - len(students))
+    courses += [""] * (max_rows - len(courses))
+    lecturers += [""] * (max_rows - len(lecturers))
+
+    # Print the table header
+    print(f"{'Students':<30} | {'Courses':<30} | {'Lecturers':<30}")
+    print("-" * 95)
+
+    # Print the table rows
+    for student, course, lecturer in zip(students, courses, lecturers):
+        print(f"{student:<30} | {course:<30} | {lecturer:<30}")
+
+# Main function for the administrator menu :
+def main():
+  while True: # Infinite loop to keep the menu running until exit :
+    print("\n---Administrator Menu---")
+    print("1. Add New Course") # Menu option to add a course
+    print("2. Add/Remove Students") # Menu option to manage students
+    print("3. Manage Lecturers") # Menu option to manage lecturers
+    print("4. Generate Reports") # Menu option to generate reports
+    print("5. View All Data") # Menu option to view all data
+    print("6. Exit") # Exit option
+
+    choice = input("Enter your choice: ") # Get user input
+
+    # Call the appropriate function based on user input
+    if choice == "1":
+        add_new_course()
+    elif choice == "2":
+        manage_students()
+    elif choice == "3":
+        manage_lecturers()
+    elif choice == "4":
+        generate_reports()
+    elif choice == "5":
+        view_all_data()
+    elif choice == "6":
+        print("Exiting the system.") # Exit manage
+        break # Break out of the loop to terminate the program
+    else:
+        print("Invalid option. Try again.") # Handle invalid input
+
+    # Ask user if they want to return to the main menu or exit
+    while True:
+        return_choice= input('\nDo you want to return to the main menu ? (yes/no):').strip().lower()
+        if return_choice == 'yes':
+            break # Return to the main menu
+        elif return_choice == 'no':
+            print('Exiting the system.') # Exit message
+            return # Exit the main function
+        else:
+            print("Invalid input,please enter 'yes' or 'no'.")
+# Enter point of the program
+if __name__ == "__main__":
+    main()
