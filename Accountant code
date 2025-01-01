@@ -1,0 +1,172 @@
+
+def add_student_details():
+    with open('students_f.txt','a') as file:
+        while True:
+            name= input('Please enter <S> to continue the program. Else, please enter <X> to exit: ')
+            if name.upper() =='X':
+                print("Exit this program.")
+                break
+
+            elif name.upper() == 'S':
+                student_id=input('Please enter student ID: ')
+                name=input('Please enter student name: ')
+                tuition_fee=input('Please enter tuition fee: ')
+                outstanding_fee=input('Please enter outstanding fee: ')
+                student_f=','.join([student_id,name,tuition_fee,outstanding_fee]) #become 1 line
+                file.write(student_f+'\n')  #record
+                break
+
+def update_tuition_fee():
+    search_student_id=input("Please enter student ID: ")
+
+    with open('students_f.txt','r') as file:
+        lines=file.readlines()
+
+    with open('students_f.txt','w') as file:
+        for line in lines:
+            student_id,name,tuition_fee,outstanding_fee= line.strip().split(',')
+
+            if student_id == search_student_id:
+                tuition_fee= input('Please update tuition fee: ')
+                new_line= f"{student_id},{name},{tuition_fee},{outstanding_fee}\n"
+                file.write(new_line)
+
+def view_outstanding_fees():
+    with open('students_f.txt','r') as f:
+        while True:
+            name=input('Please enter <K> to view outstanding fees or enter <J> to exit: ')
+            if name.upper()=='J':
+                print('Exit.')
+                break
+            elif name.upper()=='K':
+                print('Students with outstanding fees:')
+
+                with open('students_f.txt','r') as f:
+                    found = False
+                    for lines in f:
+                        student_id,name,tuition_fee,outstanding_fee=lines.strip().split(',')
+
+                        if float(outstanding_fee)>0:
+                            found=True
+                            print('Student ID: ',student_id,'Name: ',name,'Tuition fee: ',tuition_fee,'Outstanding fee: ',outstanding_fee)
+
+                    if not found:
+                        print('No students with outstanding fees.')
+
+            else:
+                print('Invalid.Please try again.')
+
+def update_payment_records():
+    search_student_id=input("Please enter student ID: ")
+    new_payment=float(input('Please enter total payment paid: '))
+
+    with open('students_f.txt','r') as file:
+        lines=file.readlines()
+
+        with open('students_f.txt','w') as file:
+            updated=False
+            for line in lines:
+                student_id,name,tuition_fee,outstanding_fee= line.strip().split(',')
+                outstanding_fee=float(outstanding_fee)
+
+                if student_id == search_student_id:
+                    n_outstanding_fee=outstanding_fee-new_payment
+                    if n_outstanding_fee<0:
+                        print("Payment exceeds.")
+
+                    file.write(f'{student_id},{name},{tuition_fee},{n_outstanding_fee}')
+                    print('Updated record.\nStudent ID: ',student_id,'\nName: ',name,'Tuition fee: ',tuition_fee,'Outstanding fee: ',n_outstanding_fee)
+                    updated=True
+                else:
+                    file.write(line)
+
+            if not updated:
+                print('Student not found.')
+
+
+def issue_fee_receipts():
+    search_student_id=input('Please enter Student ID: ')
+
+    with open('students_f.txt','r') as file:
+        lines=file.readlines()
+
+    for line in lines:
+        student_id,name,tuition_fee,outstanding_fee= line.strip().split(',')
+
+        if student_id == search_student_id:
+            print("---------------------\n"
+                  "\t\tReceipt\t\t\t\t\n"
+                  "----------------------\n"
+                  "Student ID: ",student_id,
+                  "\nName: ",name,
+                  "\nTuition fee: ",tuition_fee,
+                  "\nOutstanding fee: ",outstanding_fee,
+                  "\n--------------------")
+
+def view_financial_summary():
+    total_tuition_fees=0.0
+    total_outstanding_fees = 0.0
+    total_fees_collected=0.0
+
+    try:
+        with open('students_f.txt','r') as file:
+            for line in file:
+                student_id,name,tuition_fee,outstanding_fee = line.strip().split(',')
+                tuition_fee= float(tuition_fee)
+                outstanding_fee=float(outstanding_fee)
+
+                total_tuition_fees += tuition_fee
+                total_outstanding_fees += outstanding_fee
+                total_fees_collected += (tuition_fee-outstanding_fee)
+
+            print('\nFinancial Summary:','\nTotal Collected Fees: ',total_fees_collected,'\nTotal Outstanding Fees: ',total_outstanding_fees)
+
+    except FileNotFoundError:
+        print('Error! File "students_f.txt" does not exist. Please try again.')
+
+def display_menu():
+    print("\nMenu:")
+    print("1. Add Student")
+    print("2. Record Tuition Fees")
+    print("3. View Outstanding Fees")
+    print("4. Update Payment Records")
+    print("5. View Financial Summary")
+    print("6. Issue Fee Receipt")
+    print("7. Exit")
+
+def menu_acc():
+
+    while True:
+        try:
+            display_menu()
+            choice = input("Enter your choice: ")
+
+            if choice == "1":
+                add_student_details()
+
+            elif choice == "2":
+                update_tuition_fee()
+
+            elif choice =="3":
+                view_outstanding_fees()
+
+            elif choice =="4":
+                update_payment_records()
+
+            elif choice =="5":
+                view_financial_summary()
+
+            elif choice=="6":
+                issue_fee_receipts()
+
+            elif choice == "7":
+                print("Exit.")
+                break
+
+            else:
+                print('Please try again.')
+
+        except ValueError:
+                print("Invalid choice, please try again.")
+if __name__ == "__main__":
+     menu_acc()
