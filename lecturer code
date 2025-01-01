@@ -1,0 +1,114 @@
+# main menu
+def Lecturer_Menu():
+    print("--------------Lecturer Menu--------------")
+    print("Which service are you looking for?")
+    print("1.View Assigned Modules")
+    print("2.Record The Grades For Students")
+    print("3.View Student List")
+    print("4.Track Attendance For Students")
+    print("5.View Students Grades")
+    print("----------------------------------------------------------")
+
+    choice = int(input("Please select 1 to 5:"))
+
+    if choice == 1:
+        print("Directing to Assigned Modules... ")
+        view_assignment_module()
+    elif choice == 2:
+        print("Directing to Record Grades For Students...")
+        record_grade()
+    elif choice == 3:
+        print("Directing to Students List...")
+        view_students_list()
+    elif choice == 4:
+        print("Directing to Attendance For Students...")
+        mark_attendance()
+    elif choice == 5:
+        print("Directing to Students Grades...")
+        view_student_grades()
+    else:
+        print("Invalid choice. Please try again.")
+
+# option 1
+def view_assignment_module():
+    # to avoid error
+    try:
+        with open("assigned_module.txt" , "r") as file:
+            content = file.readlines()
+            print("Here is all the assigned modules. Please refer according to your Lecturer ID.")
+            print("[Lecturer ID] [Module Code] [Module Name]")
+            print("-" * 50)
+            for module_structure in content:
+                print(module_structure.strip())
+    except FileNotFoundError:
+        print("Module file not found.")
+
+# option 2
+def record_grade():
+    student_id = input("Please enter student ID: ")
+    module_code = input("Please enter module code: ")
+    module_name = input("Please enter module name: ")
+    student_grade = input("Please enter student's grade: ")
+
+    with open("students_grades.txt", "a") as file:
+        file.write(f"{student_id},{module_code},{module_name},{student_grade}\n")
+    print("Student's grade recorded successfully")
+
+# option 3
+def view_students_list():
+    module_code = input("Please enter the module code (e.g. CS001) :").strip()
+    try:
+        # Find enrolled students for the module
+        enrolled_students = []
+        with open("student_enrollments_list.txt", "r") as enroll_file:
+           for line in enroll_file:
+               data = line.strip().split(",")
+               if data[0] == module_code:
+                   enrolled_students.append(data[1])
+        # if no module code is found
+        if not enrolled_students:
+            print(f"There is no students for this module :{module_code}")
+            return
+        # student_info
+        student_info = {}
+        with open ("students.txt","r") as student_file:
+            for line in student_file:
+                data = line.strip().split(",")
+                student_info[data[0]] = {"Name":data[1], "module_name": data[2]}
+        # show result
+        print(f"Students who enrolled in {module_code}:")
+        for student_id in enrolled_students:
+            if student_id in student_info:
+                student = student_info[student_id]
+                print(f"Student ID : {student_id}, Name: {student['Name']}, Module Name: {student ['module_name'] }")
+            else:
+                print(f"Student ID: {student_id} is not found.")
+    except FileNotFoundError as e:
+        print("Error! File not found.")
+
+# option 4
+def mark_attendance():
+    student_id = input("Enter student ID: ").strip()
+    module_code = input("Enter module code: ").strip()
+    attendance_date = input("Enter attendance date (DD-MM-YYYY): ").strip()
+
+    try:
+        with open("student_attendance.txt", "a") as file:
+            file.write(f"{student_id},{module_code},{attendance_date}\n")
+        print("Attendance marked successfully.")
+    except IOError:
+        print("Error: Unable to access the attendance file.")
+
+# option 5
+def view_student_grades():
+    module_code = input("Enter module code to view grades: ").strip()
+
+    try:
+        with open("students_grades.txt", "r") as file:
+            print(f"\nGrades for module {module_code}:")
+            for line in file:
+                student_id, module_cod, module_name, student_grade = line.strip().split(',')
+                if module_cod == module_code:
+                    print(f"Student ID: {student_id}, Grade: {student_grade}")
+    except FileNotFoundError:
+        print("Error: Grades file not found.")
