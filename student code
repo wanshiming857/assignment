@@ -1,0 +1,138 @@
+def menu():
+    print("\n" + "-" * 29)
+    print(" --WELCOME TO STUDENT MENU-- ")
+    print("-" * 29)
+    print("  1. View Available Modules.")
+    print("  2. View Grades.")
+    print("  3. Enroll in Module.")
+    print("  4. View Attendance Percentage.")
+    print("  5. Unenroll from Module.")
+    print("  6. Exit.")
+    print("-" * 29)
+
+
+# 1-
+def available_modules():
+    try:
+        with open('modules.txt', 'r') as f:
+            modules = f.read()
+        if modules.strip():
+            print("\nAvailable Modules:\n")
+            print(modules)
+        else:
+            print("\nNo Available Modules.")
+    except FileNotFoundError:
+        print("\nError: The file 'modules.txt' does not exist.")
+    except Exception as e:
+        print(f"\nAn error occurred: {e}")
+
+
+# 2-
+def view_grades():
+    try:
+        with open('grades.txt', 'r') as f:
+            grades = f.read()
+        if grades.strip():
+            print("\nYour Grades:\n")
+            print(grades)
+        else:
+            print("\nNo Available Grades.")
+    except FileNotFoundError:
+        print("\nError: The file 'grades.txt' does not exist.")
+    except Exception as e:
+        print(f"\nAn error occurred: {e}")
+
+
+# 3-
+def enroll():
+    try:
+        with open('moudles.txt','r') as f :
+            moudles = f.read().splitlines()
+        if moudles :
+            print("\nAvailble Moudles: \n")
+            print("\n".join(moudles))
+            moudle_enrolling = input("Enter the name of the modul you want to enroll in: ")
+
+            if moudle_enrolling in moudles :
+                print(f"\nYou Are Already enrolled in {moudle_enrolling}.")
+            else :
+                with open('moudles.txt','a')as f:
+                    f.write(moudle_enrolling+'\n')
+                    print(f"\nYou Have Succssefully enrolled in {moudle_enrolling}.")
+        else :
+            print("\nNo Modules Enrolled In.")
+
+    except FileNotFoundError :
+        print("\nErorr:The File 'Moudles.txt' was not found.")
+    except Exception as e :
+        print(f"\nAn Error occurred {e}.")
+
+# 4-
+def access_attendance():
+    try:
+        with open('attendance.txt', 'r') as f:
+            attendance = f.read()
+        if attendance.strip():
+            print("\nYour Attendance Record:\n")
+            print(attendance)
+        else:
+            print("\nNo Attendance Records.")
+    except FileNotFoundError:
+        print("\nError: The file 'attendance.txt' does not exist.")
+    except Exception as e:
+        print(f"\nAn error occurred: {e}")
+
+
+# 5-
+def unenroll():
+    try:
+        with open('modules.txt', 'r') as f:
+            modules = f.readlines()
+
+        if modules:
+            print("\nYour current enrolled modules:\n")
+            print("".join(modules))
+            module_to_unenroll = input("Enter the name of the module you want to unenroll from: ")
+
+            if f"{module_to_unenroll}\n" in modules:
+                modules.remove(f"{module_to_unenroll}\n")
+                with open('modules.txt', 'w') as f:
+                    f.writelines(modules)
+                print(f"\nYou have successfully unenrolled from {module_to_unenroll}.")
+            else:
+                print(f"\n{module_to_unenroll} is not in your list of enrolled modules.")
+        else:
+            print("\nNo modules to be unenrolled from.")
+    except FileNotFoundError:
+        print("\nError: The file 'modules.txt' does not exist.")
+    except Exception as e:
+        print(f"\nAn error occurred: {e}")
+
+
+def student_menu():
+    while True:
+        menu()
+        choice = input("Enter choice from (1-6): ")
+
+        try:
+            if choice == '1':
+                available_modules()
+            elif choice == '2':
+                view_grades()
+            elif choice == '3':
+                enroll()
+            elif choice == '4':
+                access_attendance()
+            elif choice == '5':
+                unenroll()
+            elif choice == '6':
+                print("\nExiting program. Goodbye!")
+                break
+            else:
+                print("\nInvalid choice. Please choose a valid option (1-6).")
+        except Exception as e:
+            print(f"\nAn unexpected error occurred: {e}")
+
+
+if __name__ == "__main__":
+    student_menu()
