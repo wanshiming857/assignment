@@ -1,0 +1,57 @@
+import os
+
+print("Current working directory:", os.getcwd())
+
+# Import necessary modules
+from Administrator import main
+from REGISTER import menu_function
+from lecturer import Lecturer_Menu
+from Student import student_menu
+from Accountant import menu_acc
+
+
+def combine_menu():
+    while True:
+        print("\n=== UNIVERSITY MANAGEMENT SYSTEM ===")
+        print("1. Administrator")
+        print("2. Lecturer")
+        print("3. Student")
+        print("4. Registrar")
+        print("5. Accountant")
+        print("6. Exit")
+
+        try:
+            choice = input("Enter your choice (1-6): ").strip()
+
+            if choice == "1":
+                print("\nOpening Administrator menu...")
+                main()  # This should be the admin menu function
+            elif choice == "2":
+                print("\nOpening Lecturer menu...")
+                Lecturer_Menu()  # Ensure this is the correct lecturer menu function
+            elif choice == "3":
+                print("\nOpening Student menu...")
+                student_menu()  # Ensure that the student menu has a loop inside it
+            elif choice == "4":
+                print("\nOpening Registrar menu...")
+                menu_function()  # Correct function for the registrar menu
+            elif choice == "5":
+                print("\nOpening Accountant menu...")
+                menu_acc()  # Correct function for accountant menu
+            elif choice == "6":
+                print("\nExiting the system. Goodbye!")
+                break  # Exit the main program
+            else:
+                print("\nInvalid choice. Please enter a number between 1 and 6.")
+        except Exception as e:
+            print(f"\nAn error occurred: {e}")
+
+if __name__ == "__main__":
+    combine_menu()
+
+
+
+
+
+
+
